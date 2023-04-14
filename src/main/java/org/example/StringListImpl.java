@@ -7,15 +7,15 @@ import exception.ItemValidException;
 import java.util.Arrays;
 
 public class StringListImpl implements StringList {
-    private final String[] arr;
+    private final Integer[] arr;
     int size;
 
     public StringListImpl(int count) {
-        arr = new String[count];
+        arr = new Integer[count];
     }
 
     @Override
-    public String add(String item) {
+    public Integer add(Integer item) {
         validateItem(item);
         validateSize();
         arr[size++] = item;
@@ -23,7 +23,7 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public String add(int index, String item) {
+    public Integer add(int index, Integer item) {
         validateItem(item);
         validateSize();
         validateIndex(index);
@@ -37,7 +37,7 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public String set(int index, String item) {
+    public Integer set(int index, Integer item) {
         validateItem(item);
         validateIndex(index);
         arr[index] = item;
@@ -45,16 +45,16 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public String remove(String item) {
+    public Integer remove(Integer item) {
         validateItem(item);
         int index = indexOf(item);
         return remove(index);
     }
 
     @Override
-    public String remove(int index) {
+    public Integer remove(int index) {
         validateIndex(index);
-        String item = arr[index];
+        Integer item = arr[index];
         if (index != size) {
             System.arraycopy(arr, index + 1, arr, index, size - index);
         }
@@ -63,13 +63,14 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public boolean contains(String item) {
-        validateItem(item);
-        return indexOf(item) != -1;
+    public boolean contains(Integer item) {
+        Integer[] arrCopy = toArray();
+        sorted(arrCopy);
+        return binarySearch(arrCopy, item);
     }
 
     @Override
-    public int indexOf(String item) {
+    public int indexOf(Integer item) {
         for (int i = 0; i < size; i++) {
             if (arr[i].equals(item)) {
                 return i;
@@ -79,7 +80,7 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public int lastIndexOf(String item) {
+    public int lastIndexOf(Integer item) {
         for (int i = size - 1; i >= 0; i--) {
             if (arr[i].equals(item)) {
                 return i;
@@ -89,7 +90,7 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public String get(int index) {
+    public Integer get(int index) {
         validateIndex(index);
         return arr[index];
     }
@@ -114,15 +115,15 @@ public class StringListImpl implements StringList {
 
     @Override
     public void clear() {
-      Arrays.fill(arr,null);
+        Arrays.fill(arr, null);
     }
 
     @Override
-    public String[] toArray() {
-        return Arrays.copyOf(arr, size);
+    public Integer[] toArray() {
+        return Arrays.copyOf(arr, arr.length);
     }
 
-    public void validateItem(String item) {
+    public void validateItem(Integer item) {
         if (item == null) {
             throw new ItemValidException("Указан неверный элемент");
         }
@@ -138,5 +139,38 @@ public class StringListImpl implements StringList {
         if (size == arr.length) {
             throw new ArrayFullException("Массив заполен");
         }
+    }
+
+    private void sorted(Integer[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            int min = arr[i];
+            int minId = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] < min) {
+                    min = arr[j];
+                    minId = j;
+                }
+            }
+            int temp = arr[i];
+            arr[i] = min;
+            arr[minId] = temp;
+        }
+    }
+
+    private boolean binarySearch(Integer[] sortedArr, Integer item) {
+        int min = 0;
+        int max = sortedArr.length - 1;
+        while (min <= max) {
+            int mid = (min + max) / 2;
+            if (item.equals(sortedArr[mid])) {
+                return true;
+            }
+            if (item < sortedArr[mid]) {
+                max = mid - 1;
+            } else {
+                min = mid + 1;
+            }
+        }
+        return false;
     }
 }
