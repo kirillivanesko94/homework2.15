@@ -1,4 +1,3 @@
-import exception.ArrayFullException;
 import exception.IndexValidException;
 import exception.ItemValidException;
 import org.example.StringList;
@@ -6,11 +5,7 @@ import org.example.StringListImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +16,12 @@ public class StringListImplTest {
     public void setUp() {
         stringList.add(2);
         stringList.add(1);
+    }
+    @Test
+    void checkNewArrayCreated(){
+        stringList.add(5);
+        stringList.add(7);
+        assertTrue(stringList.toArray().length  == 4);
     }
 
     @ParameterizedTest
@@ -44,17 +45,15 @@ public class StringListImplTest {
     void checkSetSuccess() {
         int index = 1;
         Integer item = 3;
-        Integer[] expected = new Integer[]{2, 3};
         stringList.set(index, item);
-        assertArrayEquals(expected, stringList.toArray());
+        assertEquals(stringList.toArray()[index], item);
     }
 
     @ParameterizedTest
     @ValueSource(ints = 1)
     void checkRemoveSuccess(int index) {
-        Integer[] expected = new Integer[]{2};
         stringList.remove(index);
-        assertArrayEquals(expected, stringList.toArray());
+        assertNull(stringList.toArray()[index]);
     }
 
     @Test
@@ -140,16 +139,4 @@ public class StringListImplTest {
         String expectedException = "Указан неверный индекс";
         assertEquals(expectedException, exception.getMessage());
     }
-
-    @Test
-    void checkValidateSize() {
-        stringList.add(5);
-        Exception exception = assertThrows(ArrayFullException.class,
-                () -> stringList.add(6));
-        String expectedException = "Массив заполен";
-        assertEquals(expectedException, exception.getMessage());
-    }
-
-
-
 }

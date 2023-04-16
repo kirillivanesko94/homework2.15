@@ -1,13 +1,12 @@
 package org.example;
 
-import exception.ArrayFullException;
 import exception.IndexValidException;
 import exception.ItemValidException;
 
 import java.util.Arrays;
 
 public class StringListImpl implements StringList {
-    private final Integer[] arr;
+    private Integer[] arr;
     int size;
 
     public StringListImpl(int count) {
@@ -107,10 +106,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public boolean isEmpty() {
-        if (size == 0) {
-            return true;
-        }
-        return false;
+        return arr.length == 0;
     }
 
     @Override
@@ -137,24 +133,47 @@ public class StringListImpl implements StringList {
 
     public void validateSize() {
         if (size == arr.length) {
-            throw new ArrayFullException("Массив заполен");
+            grow();
         }
     }
 
-    private void sorted(Integer[] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            int min = arr[i];
-            int minId = i;
-            for (int j = i + 1; j < arr.length; j++) {
-                if (arr[j] < min) {
-                    min = arr[j];
-                    minId = j;
-                }
-            }
-            int temp = arr[i];
-            arr[i] = min;
-            arr[minId] = temp;
+    private void grow() {
+        arr = Arrays.copyOf(arr, (int) (arr.length * 1.5));
+    }
+
+    public static void quickSort(Integer[] arr, int begin, int end) {
+        if (begin < end) {
+            int partitionIndex = partition(arr, begin, end);
+
+            quickSort(arr, begin, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, end);
         }
+    }
+
+    private static int partition(Integer[] arr, int begin, int end) {
+        int pivot = arr[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+
+                swapElements(arr, i, j);
+            }
+        }
+
+        swapElements(arr, i + 1, end);
+        return i + 1;
+    }
+
+    private static void swapElements(Integer[] arr, int i, int end) {
+        int temp = arr[i];
+        arr[i] = arr[end];
+        arr[end] = temp;
+    }
+
+    private void sorted(Integer[] arrays) {
+        quickSort(arr, 0, arr.length - 1);
     }
 
     private boolean binarySearch(Integer[] sortedArr, Integer item) {
@@ -174,3 +193,4 @@ public class StringListImpl implements StringList {
         return false;
     }
 }
+
