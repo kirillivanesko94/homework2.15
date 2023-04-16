@@ -1,11 +1,16 @@
 import exception.ArrayFullException;
 import exception.IndexValidException;
 import exception.ItemValidException;
+import org.example.StringList;
 import org.example.StringListImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,68 +19,65 @@ public class StringListImplTest {
 
     @BeforeEach
     public void setUp() {
-        stringList.add("Привет");
-        stringList.add("Как дела?");
-    }
-
-    public String arrayToString(String[] arr) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String s : arr) {
-            stringBuilder.append(s).append(" ");
-        }
-        return stringBuilder.toString();
+        stringList.add(2);
+        stringList.add(1);
     }
 
     @ParameterizedTest
-    @ValueSource(strings = "Пока")
-    void checkAddSuccess(String item) {
-        String[] expected = new String[]{"Привет", "Как дела?", "Пока"};
+    @ValueSource(ints = 3)
+    void checkAddSuccess(Integer item) {
+        Integer[] expected = new Integer[]{2, 1, 3};
         stringList.add(item);
-        assertEquals(arrayToString(expected), arrayToString(stringList.toArray()));
+        assertArrayEquals(expected, stringList.toArray());
     }
 
     @Test
     void checkAddWithIndexSuccess() {
         int index = 1;
-        String item = "Пока";
-        String[] expected = new String[]{"Привет", "Пока", "Как дела?"};
+        Integer item = 3;
+        Integer[] expected = new Integer[]{2, 3, 1};
         stringList.add(index, item);
-        assertEquals(arrayToString(expected), arrayToString(stringList.toArray()));
+        assertArrayEquals(expected, stringList.toArray());
     }
 
     @Test
     void checkSetSuccess() {
         int index = 1;
-        String item = "Пока";
-        String[] expected = new String[]{"Привет", "Пока"};
+        Integer item = 3;
+        Integer[] expected = new Integer[]{2, 3};
         stringList.set(index, item);
-        assertEquals(arrayToString(expected), arrayToString(stringList.toArray()));
+        assertArrayEquals(expected, stringList.toArray());
     }
 
     @ParameterizedTest
     @ValueSource(ints = 1)
     void checkRemoveSuccess(int index) {
-        String[] expected = new String[]{"Привет"};
+        Integer[] expected = new Integer[]{2};
         stringList.remove(index);
-        assertEquals(arrayToString(expected), arrayToString(stringList.toArray()));
+        assertArrayEquals(expected, stringList.toArray());
     }
 
     @Test
     void checkContainsSuccess() {
-        String expected = "Привет";
-        assertTrue(stringList.contains(expected));
+        StringListImpl stringList = new StringListImpl(5);
+        stringList.add(2);
+        stringList.add(1);
+        stringList.add(3);
+        stringList.add(5);
+        stringList.add(8);
+        assertTrue(stringList.contains(3));
     }
 
     @Test
     void checkIndexOfSuccess() {
-        String expected = "Привет";
+        Integer expected = 2;
         int actual = stringList.indexOf(expected);
         assertEquals(0, actual);
     }
 
     @Test
     void checkLastIndexOfSuccess() {
-        String expected = "Как дела?";
+        Integer expected = 1;
         int actual = stringList.indexOf(expected);
         assertEquals(1, actual);
     }
@@ -83,17 +85,21 @@ public class StringListImplTest {
     @Test
     void checkGet() {
         int index = 0;
-        String expected = "Привет";
-        String actual = stringList.get(index);
+        Integer expected = 2;
+        Integer actual = stringList.get(index);
         assertEquals(expected, actual);
     }
 
     @Test
     void checkEquals() {
-        String[] expected = new String[2];
-        expected[0] = "Привет";
-        expected[1] = "Как дела?";
-        assertTrue(arrayToString(stringList.toArray()).equals(arrayToString(expected)));
+        StringList stringList1 = new StringListImpl(3);
+        stringList1.add(1);
+        stringList1.add(2);
+        StringList stringList2 = new StringListImpl(3);
+        stringList2.add(1);
+        stringList2.add(2);
+        assertTrue(stringList1.equals(stringList2));
+
     }
 
     @Test
@@ -115,8 +121,8 @@ public class StringListImplTest {
 
     @Test
     void checkToArray() {
-        String[] expected = stringList.toArray();
-        assertEquals(arrayToString(expected), arrayToString(stringList.toArray()));
+        Integer[] expected = stringList.toArray();
+        assertArrayEquals(expected, stringList.toArray());
     }
 
     @Test
@@ -134,14 +140,16 @@ public class StringListImplTest {
         String expectedException = "Указан неверный индекс";
         assertEquals(expectedException, exception.getMessage());
     }
+
     @Test
     void checkValidateSize() {
-        stringList.add("Hello");
+        stringList.add(5);
         Exception exception = assertThrows(ArrayFullException.class,
-                () -> stringList.add("By"));
+                () -> stringList.add(6));
         String expectedException = "Массив заполен";
         assertEquals(expectedException, exception.getMessage());
     }
+
 
 
 }

@@ -2,19 +2,19 @@ package org.example;
 
 public interface StringList {
 
-    String add(String item);
-    String add(int index, String item);
-    String set(int index, String item);
-    String remove(String item);
-    String remove(int index);
-    boolean contains(String item);
-    int indexOf(String item);
-    int lastIndexOf(String item);
-    String get(int index);
+    Integer add(Integer item);
+    Integer add(int index, Integer item);
+    Integer set(int index, Integer item);
+    Integer remove(Integer item);
+    Integer remove(int index);
+    boolean contains(Integer item);
+    int indexOf(Integer item);
+    int lastIndexOf(Integer item);
+    Integer get(int index);
     boolean equals(StringList otherList);
     int size();
     boolean isEmpty();
     void clear();
-    String[] toArray();
+    Integer[] toArray();
 }
 
